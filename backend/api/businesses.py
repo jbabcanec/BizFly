@@ -23,13 +23,14 @@ async def search_businesses(
     places_service = GooglePlacesService()
     
     try:
-        businesses = await places_service.search_businesses(
+        places_data = await places_service.search_businesses(
             location=search.location,
             radius_miles=search.radius_miles,
             business_types=search.business_types
         )
         
-        for business_data in businesses:
+        saved_businesses = []
+        for business_data in places_data:
             existing = db.query(Business).filter_by(
                 google_place_id=business_data['place_id']
             ).first()
@@ -48,10 +49,14 @@ async def search_businesses(
                     business_type=business_data.get('business_type')
                 )
                 db.add(new_business)
+                db.flush()  # Get the ID before commit
+                saved_businesses.append(new_business)
+            else:
+                saved_businesses.append(existing)
         
         db.commit()
         
-        return [BusinessResponse.from_orm(b) for b in businesses]
+        return [BusinessResponse.model_validate(b) for b in saved_businesses]
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -70,7 +75,7 @@ async def list_businesses(
         query = query.filter(Business.website_status == website_status)
     
     businesses = query.offset(skip).limit(limit).all()
-    return [BusinessResponse.from_orm(b) for b in businesses]
+    return [BusinessResponse.model_validate(b) for b in businesses]
 
 
 @router.get("/{business_id}")
@@ -83,4 +88,4 @@ async def get_business(
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
-    return BusinessResponse.from_orm(business)
+    return BusinessResponse.model_validate(business)

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -29,6 +29,17 @@ export default function SearchPanel() {
     mutationFn: searchBusinesses,
     onSuccess: (data) => {
       setBusinesses(data)
+      
+      // Auto-scroll to results after successful search
+      setTimeout(() => {
+        const resultsElement = document.getElementById('search-results')
+        if (resultsElement) {
+          resultsElement.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          })
+        }
+      }, 300) // Small delay to ensure results are rendered
     }
   })
 

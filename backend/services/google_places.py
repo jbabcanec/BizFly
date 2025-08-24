@@ -52,7 +52,7 @@ class GooglePlacesService:
                         place_id=place_id,
                         fields=['website', 'name', 'formatted_address', 
                                'geometry/location', 'url', 'formatted_phone_number',
-                               'types']
+                               'type']
                     )['result']
                     
                     website = details.get('website')
@@ -68,7 +68,7 @@ class GooglePlacesService:
                         'website': website,
                         'website_status': website_status,
                         'google_maps_url': details.get('url'),
-                        'business_type': details.get('types', [None])[0]
+                        'business_type': details.get('type', [None])[0] if details.get('type') else None
                     }
                     
                     businesses.append(business_data)

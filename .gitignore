@@ -30,15 +30,36 @@ frontend/.next/
 frontend/out/
 frontend/build/
 
-# Generated websites
+# Generated websites (keep examples but not user-generated)
 generated_websites/
+!generated_websites/rays_diner_original/
 
 # IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+.claude/
 
 # OS files
 .DS_Store
 Thumbs.db
+
+# Cache directories
+cache/
+.cache/
+
+# npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Next.js
+.vercel
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.nyc_output

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '@/components/Layout'
 import SearchPanel from '@/components/SearchPanel'
-import BusinessList from '@/components/BusinessList'
+import BusinessResults from '@/components/BusinessResults'
 import WebsitePreview from '@/components/WebsitePreview'
 import { Business } from '@/types/business'
 import { 
@@ -115,33 +115,43 @@ export default function Dashboard() {
           {/* Content Area */}
           <div className="stagger-animation">
             {activeTab === 'search' && (
-              <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-                <div className="xl:col-span-5 space-y-6">
-                  <div className="card p-6">
-                    <SearchPanel />
-                  </div>
-                  <div className="card p-6 max-h-[600px] overflow-y-auto">
-                    <BusinessList 
-                      onSelectBusiness={setSelectedBusiness}
-                      selectedBusiness={selectedBusiness}
-                    />
-                  </div>
+              <div className="space-y-8">
+                {/* Search Panel - Compact but prominent */}
+                <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 border-2 border-gray-100 shadow-xl">
+                  <SearchPanel />
                 </div>
-                <div className="xl:col-span-7">
-                  {selectedBusiness ? (
-                    <div className="card p-6">
-                      <WebsitePreview business={selectedBusiness} />
-                    </div>
-                  ) : (
-                    <div className="card p-12 text-center">
-                      <div className="mx-auto h-24 w-24 text-gray-400 mb-4">
-                        <MagnifyingGlassIcon className="w-full h-full" />
+                
+                {/* MAIN RESULTS SECTION - Full width and prominent */}
+                <div id="search-results" className="space-y-6">
+                  <BusinessResults 
+                    onSelectBusiness={setSelectedBusiness}
+                    selectedBusiness={selectedBusiness}
+                  />
+                </div>
+                
+                {/* Website Preview - Only show if business is selected, as overlay */}
+                {selectedBusiness && (
+                  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                      <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50">
+                        <h3 className="text-xl font-semibold text-gray-900">
+                          Generate Website for {selectedBusiness.name}
+                        </h3>
+                        <button 
+                          onClick={() => setSelectedBusiness(null)}
+                          className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-full"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Search for Businesses</h3>
-                      <p className="text-gray-600 mb-6">Find local businesses and generate websites with AI</p>
+                      <div className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
+                        <WebsitePreview business={selectedBusiness} />
+                      </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             )}
             
@@ -150,7 +160,7 @@ export default function Dashboard() {
             )}
             
             {activeTab === 'websites' && (
-              <GeneratedWebsitesList />
+              <WebsiteManager />
             )}
           </div>
         </main>
@@ -228,21 +238,15 @@ function TemplateShowcase() {
   )
 }
 
-// Generated Websites List Component
-function GeneratedWebsitesList() {
-  return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Generated Websites</h2>
-        <p className="text-gray-600">Manage and preview all your generated websites</p>
-      </div>
-      <div className="card p-12 text-center">
-        <div className="mx-auto h-24 w-24 text-gray-400 mb-6">
-          <GlobeAltIcon className="w-full h-full" />
-        </div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">No Websites Yet</h3>
-        <p className="text-gray-600 mb-6">Start by searching for businesses and generating websites</p>
-      </div>
+// Import WebsiteManager component
+import dynamic from 'next/dynamic'
+
+// Dynamically import WebsiteManager to avoid SSR issues
+const WebsiteManager = dynamic(() => import('@/components/WebsiteManager'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex justify-center py-12">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
     </div>
   )
-}
+})

@@ -4,6 +4,50 @@
 ### 🎯 Project Vision
 A professional, scalable platform that discovers businesses without websites and automatically generates beautiful, minimalistic websites using AI agents for research and content creation.
 
+### 🚀 PRODUCTION READINESS STATUS
+
+#### ✅ Completed Features
+- **Authentication System**: JWT-based login with demo users
+- **Modern UI**: Glass morphism, animations, responsive design
+- **Dashboard**: Centralized workspace with tabs
+- **Image Sourcing**: Multi-provider fallback system (Unsplash, Pexels, Picsum)
+- **Website Storage**: Complete file management system
+- **Static Serving**: Direct preview URLs for generated sites
+
+#### 🔧 Production Requirements
+
+##### Phase 1: Core Infrastructure (ACTIVE)
+- [x] Authentication & user management
+- [x] Basic dashboard interface
+- [x] Template system foundation
+- [ ] Google Places API integration
+- [ ] Claude API for research
+- [ ] Website preview server
+- [ ] Export/download system
+
+##### Phase 2: Website Management System
+- [ ] **Live Preview Server**
+  - Spin up isolated preview on port
+  - Graceful teardown after timeout
+  - Hot reload for edits
+- [ ] **Code Editor Integration**
+  - Monaco editor for HTML/CSS/JS
+  - Live preview updates
+  - Save/restore versions
+- [ ] **Export Options**
+  - ZIP download
+  - GitHub deployment
+  - Netlify/Vercel integration
+  - FTP upload
+
+##### Phase 3: Production Features
+- [ ] User accounts & permissions
+- [ ] Payment integration (Stripe)
+- [ ] Custom domains
+- [ ] SSL certificates
+- [ ] Analytics dashboard
+- [ ] White-label options
+
 ### 📐 Core Architecture Principles
 
 #### 1. Code Organization Standards
@@ -22,20 +66,34 @@ bizfly/
 │   ├── agents/              # AI agent orchestration
 │   ├── models/              # Database models
 │   ├── services/            # External service integrations
+│   │   ├── image_service.py # Image sourcing system
+│   │   ├── website_storage.py # Website file management
+│   │   └── preview_server.py # Local preview servers
 │   ├── templates/           # Website templates engine
+│   ├── static/              # Static file serving
+│   │   ├── websites/        # Generated sites
+│   │   └── images/          # Cached images
 │   └── tests/               # Backend tests
 ├── frontend/
 │   ├── src/
 │   │   ├── components/      # React components
+│   │   │   ├── WebsiteManager.tsx # Website management UI
+│   │   │   ├── CodeEditor.tsx     # Monaco editor wrapper
+│   │   │   └── LivePreview.tsx    # Preview iframe
 │   │   ├── pages/          # Next.js pages
 │   │   ├── hooks/          # Custom React hooks
 │   │   ├── services/       # API client services
 │   │   ├── stores/         # State management
 │   │   └── styles/         # Global styles
 │   └── tests/              # Frontend tests
-├── shared/
-│   ├── types/              # TypeScript type definitions
-│   └── constants/          # Shared constants
+├── generated_websites/     # Website storage
+│   ├── business_id/
+│   │   ├── index.html
+│   │   ├── styles.css
+│   │   ├── script.js
+│   │   ├── images/
+│   │   └── metadata.json
+│   └── versions/           # Version history
 ├── infrastructure/
 │   ├── docker/             # Docker configurations
 │   └── scripts/            # Deployment scripts
@@ -45,11 +103,13 @@ bizfly/
 #### 3. Technology Stack
 - **Backend**: FastAPI (Python 3.11+)
 - **Frontend**: Next.js 14+ with TypeScript
-- **Database**: PostgreSQL with SQLAlchemy ORM
+- **Database**: SQLite (dev) / PostgreSQL (prod)
 - **Cache**: Redis for session and API caching
 - **AI Agents**: Claude API (Anthropic)
 - **Search**: Google Places API
+- **Images**: Unsplash, Pexels, Picsum (fallback)
 - **Styling**: Tailwind CSS
+- **Editor**: Monaco Editor
 - **Testing**: Pytest (backend), Jest + React Testing Library (frontend)
 - **Container**: Docker + Docker Compose
 
@@ -63,54 +123,103 @@ bizfly/
 
 #### 2. AI Research Agent
 - Uses Claude to research business information
-- Scrapes reviews, social media mentions
 - Generates structured business profile
-- Stores findings in PostgreSQL
+- Extracts: services, hours, reviews, specialties
+- Stores findings in database as JSON
 
-#### 3. Template System
+#### 3. Image Service (NEW)
+```python
+# Multi-provider system with fallbacks
+1. Unsplash API (premium quality)
+2. Pexels API (free stock)
+3. Picsum Photos (lorem ipsum)
+4. UI Avatars (logo generation)
+```
+
+#### 4. Website Storage System (NEW)
+```python
+# Complete file management
+- Save website files to disk
+- Create static serving symlinks
+- Generate downloadable ZIPs
+- Version control system
+- Metadata tracking
+```
+
+#### 5. Preview Server System (PLANNED)
+```python
+# Dynamic preview servers
+class PreviewServer:
+    - Spin up on random port (8001-8999)
+    - Serve single website
+    - Auto-teardown after 30 minutes
+    - WebSocket for live reload
+    - Resource isolation
+```
+
+#### 6. Template System
 - Professional, minimalistic templates
+- Real image integration
 - Industry-specific variations
 - Component-based architecture
-- Real-time preview system
+- Live preview system
 
-#### 4. Website Generation Pipeline
-- Selects appropriate template
-- Populates with AI-researched content
-- Generates static site files
-- Deploys to localhost for preview
+#### 7. Website Generation Pipeline
+```
+Business Selected → AI Research → Image Sourcing → 
+Template Selection → Content Injection → Save to Disk → 
+Create Preview → Serve on Port
+```
 
-#### 5. Frontend Application
-- Dashboard for search management
-- Business selection interface
-- Template preview and selection
-- Generated website management
+#### 8. Frontend Application
+- **Dashboard**: Central control panel
+- **Search Tab**: Find businesses
+- **Templates Tab**: Browse designs
+- **Websites Tab**: Manage generated sites
+  - List view with previews
+  - Code editor button
+  - Preview button (opens in new tab)
+  - Download ZIP
+  - Deploy options
 
-### 📋 Development Workflow
+### 📋 Website Management UI Design
 
-#### Before Every Feature
-1. Read this GAMEPLAN.md
-2. Review code organization standards
-3. Check for existing similar code
-4. Plan module boundaries
+#### Websites Tab Interface
+```typescript
+interface WebsiteCard {
+  businessName: string
+  generatedAt: Date
+  template: string
+  previewImage: string
+  status: 'draft' | 'published'
+  actions: {
+    preview: () => void    // Opens preview server
+    edit: () => void       // Opens code editor
+    download: () => void   // ZIP download
+    deploy: () => void     // Deploy modal
+    delete: () => void     // Confirm & delete
+  }
+}
+```
 
-#### Code Quality Checklist
-- [ ] No unused imports
-- [ ] No commented-out code
-- [ ] Clear, descriptive naming
-- [ ] Type safety enforced
-- [ ] Error handling implemented
-- [ ] Tests written
-- [ ] Documentation updated
-
-#### Git Commit Standards
-- Atomic commits (one logical change)
-- Present tense commit messages
-- Format: `type: description`
-  - `feat:` New feature
-  - `fix:` Bug fix
-  - `refactor:` Code restructuring
-  - `test:` Test additions/changes
-  - `docs:` Documentation
+#### Code Editor Modal
+```typescript
+interface CodeEditor {
+  files: {
+    'index.html': string
+    'styles.css': string
+    'script.js': string
+  }
+  activeFile: string
+  livePreview: boolean
+  actions: {
+    save: () => void
+    saveAs: () => void
+    revert: () => void
+    export: () => void
+  }
+}
+```
 
 ### 🔄 Data Flow
 
@@ -121,61 +230,46 @@ bizfly/
 
 2. **Research Phase**
    ```
-   Selected Business → AI Agent → Web Research → Data Extraction → Database
+   Selected Business → AI Agent → Structured Data → Database
    ```
 
 3. **Generation Phase**
    ```
-   Business Data + Template → Content Generation → Site Assembly → Preview
+   Business Data + Images + Template → Website Files → Storage → Preview
    ```
 
-### 🚀 Implementation Phases
+4. **Preview Phase** (NEW)
+   ```
+   Request Preview → Allocate Port → Start Server → Serve Files → Auto-Teardown
+   ```
 
-#### Phase 1: Foundation (Current)
-- Project structure setup
-- Core API endpoints
-- Database models
-- Basic frontend shell
-
-#### Phase 2: Discovery
-- Google Places integration
-- Search and filter logic
-- Results caching
-- UI for search management
-
-#### Phase 3: AI Integration
-- Claude API setup
-- Research agent implementation
-- Data organization system
-- Content generation
-
-#### Phase 4: Templates
-- Template engine
-- Industry templates
-- Preview system
-- Customization options
-
-#### Phase 5: Generation
-- Pipeline orchestration
-- Local deployment
-- Export functionality
-- Website management
+### 🎨 UI/UX Principles
+- **Minimalistic**: Clean, uncluttered interface
+- **Professional**: Business-appropriate design
+- **Visual**: Card-based with preview images
+- **Intuitive**: Clear user journey
+- **Responsive**: Mobile-first approach
+- **Fast**: Sub-second interactions
+- **Interactive**: Live preview, inline editing
 
 ### 🔒 Security & Performance
 
 #### Security
 - API key encryption
-- Rate limiting
+- Rate limiting on preview servers
+- Sandboxed preview environments
 - Input validation
 - CORS configuration
 - SQL injection prevention
+- XSS protection in generated sites
 
 #### Performance
 - Redis caching strategy
+- Lazy loading images
+- Preview server pooling
 - Database query optimization
-- Lazy loading in frontend
-- Image optimization
 - Code splitting
+- CDN for static assets
 
 ### 📏 Quality Standards
 
@@ -193,42 +287,64 @@ bizfly/
 - Prop validation
 - Accessibility standards (WCAG 2.1 AA)
 
-### 🎨 UI/UX Principles
-- **Minimalistic**: Clean, uncluttered interface
-- **Professional**: Business-appropriate design
-- **Intuitive**: Clear user journey
-- **Responsive**: Mobile-first approach
-- **Fast**: Sub-second interactions
+### 🚀 Deployment Strategy
 
-### 📝 Documentation Requirements
-- README.md for project overview
-- API documentation (OpenAPI/Swagger)
-- Component storybook
-- Deployment guide
-- NO unnecessary documentation files
+#### Development
+```bash
+# One-command startup
+./start.sh
+# Access at localhost:3000
+```
 
-### ⚠️ Anti-Patterns to Avoid
-- Global state mutations
-- Circular dependencies
-- God objects/functions
-- Magic numbers/strings
-- Premature optimization
-- Over-engineering
+#### Production
+```bash
+# Docker Compose
+docker-compose up -d
+# Includes: app, db, redis, nginx
+```
+
+#### Scaling
+- Horizontal scaling for preview servers
+- CDN for generated websites
+- Database read replicas
+- Redis cluster for caching
+
+### 📝 API Endpoints
+
+#### Website Management
+```
+POST   /api/websites/generate     # Generate new website
+GET    /api/websites              # List all websites
+GET    /api/websites/{id}         # Get website details
+PUT    /api/websites/{id}         # Update website
+DELETE /api/websites/{id}         # Delete website
+GET    /api/websites/{id}/download # Download ZIP
+POST   /api/websites/{id}/preview  # Start preview server
+DELETE /api/websites/{id}/preview  # Stop preview server
+POST   /api/websites/{id}/deploy   # Deploy to service
+```
 
 ### 🔄 Review Before Each Session
 1. Is the code organized correctly?
-2. Are there any dead files to remove?
-3. Is the naming consistent?
-4. Are the tests in the right place?
-5. Is the documentation current?
+2. Are preview servers cleaned up?
+3. Are generated files organized?
+4. Is image caching working?
+5. Are all APIs responding?
+
+### 📊 Success Metrics
+- Website generation < 10 seconds
+- Preview server startup < 2 seconds
+- Image loading < 1 second
+- 99.9% uptime for preview servers
+- Zero data loss on generated sites
 
 ---
 
-## Remember: Clean Code > More Features
+## Remember: User Experience > Technical Complexity
 
-Every line of code should be:
-- **Necessary**: Serves a clear purpose
-- **Clear**: Self-documenting
-- **Maintainable**: Easy to modify
-- **Tested**: Proven to work
-- **Performant**: Efficient execution
+Every feature should be:
+- **Intuitive**: No manual needed
+- **Visual**: Show, don't tell
+- **Fast**: Instant feedback
+- **Reliable**: Always works
+- **Beautiful**: Delight users

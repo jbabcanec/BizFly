@@ -190,8 +190,8 @@ npm test
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `GOOGLE_MAPS_API_KEY` | Google Maps API key for business search | Yes |
-| `ANTHROPIC_API_KEY` | Claude API key for AI research | Yes |
+| `GOOGLE_MAPS_API_KEY` | Google Maps API key for business search | ✅ Configured |
+| `ANTHROPIC_API_KEY` | Claude API key for AI research | ⚠️ Need Key |
 | `DATABASE_URL` | PostgreSQL connection string | Yes |
 | `REDIS_URL` | Redis connection string | Yes |
 | `JWT_SECRET_KEY` | Secret key for JWT tokens | Yes |

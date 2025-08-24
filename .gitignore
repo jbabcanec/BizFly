@@ -1,0 +1,44 @@
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+backend/venv/
+backend/env/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+bizfly.db
+
+# Logs
+*.log
+backend.log
+frontend.log
+
+# Node.js
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Generated websites
+generated_websites/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

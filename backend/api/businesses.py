@@ -26,7 +26,8 @@ async def search_businesses(
         places_data = await places_service.search_businesses(
             location=search.location,
             radius_miles=search.radius_miles,
-            business_types=search.business_types
+            business_types=search.business_types,
+            max_results=search.max_results
         )
         
         saved_businesses = []

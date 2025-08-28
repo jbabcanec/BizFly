@@ -10,6 +10,7 @@ class BusinessSearch(BaseModel):
     location: str = Field(..., description="Location to search (address or coordinates)")
     radius_miles: float = Field(default=5.0, ge=0.1, le=50)
     business_types: Optional[List[str]] = None
+    max_results: int = Field(default=60, ge=20, le=200, description="Maximum number of results to fetch")
 
 
 class BusinessCreate(BaseModel):

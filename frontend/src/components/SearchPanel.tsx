@@ -11,15 +11,17 @@ const searchSchema = z.object({
   location: z.string().min(1, 'Location is required'),
   radius: z.number().min(0.1).max(50),
   businessTypes: z.string().optional(),
+  maxResults: z.number().min(20).max(200),
 })
 
 type SearchFormData = z.infer<typeof searchSchema>
 
 export default function SearchPanel() {
-  const { register, handleSubmit, formState: { errors } } = useForm<SearchFormData>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<SearchFormData>({
     resolver: zodResolver(searchSchema),
     defaultValues: {
       radius: 5,
+      maxResults: 60,
     }
   })
   
@@ -51,7 +53,8 @@ export default function SearchPanel() {
     searchMutation.mutate({
       location: data.location,
       radius_miles: data.radius,
-      business_types: businessTypes
+      business_types: businessTypes,
+      max_results: data.maxResults
     })
   }
 
@@ -82,7 +85,7 @@ export default function SearchPanel() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label htmlFor="radius" className="block text-sm font-semibold text-gray-900 mb-3">
                 Search Radius
@@ -102,6 +105,27 @@ export default function SearchPanel() {
               </div>
               {errors.radius && (
                 <p className="mt-2 text-sm text-red-600 animate-fade-in">{errors.radius.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="maxResults" className="block text-sm font-semibold text-gray-900 mb-3">
+                Max Results
+              </label>
+              <select
+                {...register('maxResults', { valueAsNumber: true })}
+                className="input-field py-4"
+              >
+                <option value={20}>20 businesses</option>
+                <option value={40}>40 businesses</option>
+                <option value={60}>60 businesses</option>
+                <option value={80}>80 businesses</option>
+                <option value={100}>100 businesses</option>
+                <option value={150}>150 businesses</option>
+                <option value={200}>200 businesses</option>
+              </select>
+              {errors.maxResults && (
+                <p className="mt-2 text-sm text-red-600 animate-fade-in">{errors.maxResults.message}</p>
               )}
             </div>
 
@@ -129,7 +153,7 @@ export default function SearchPanel() {
             {searchMutation.isPending ? (
               <>
                 <Loader2 className="animate-spin h-6 w-6 mr-3" />
-                <span>Discovering businesses...</span>
+                <span>Fetching up to {watch('maxResults')} businesses...</span>
               </>
             ) : (
               <>

@@ -16,7 +16,7 @@ async def list_websites(current_user: str = Depends(get_current_user)) -> Dict:
     """List all generated websites"""
     
     storage = WebsiteStorage()
-    websites_dir = Path("../generated_websites")
+    websites_dir = Path("generated_websites")
     
     websites = []
     

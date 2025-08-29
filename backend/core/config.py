@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     jwt_expiration_hours: int = 24
     
     cors_origins: list[str] = Field(
-        default=["http://localhost:3000"],
+        default=["http://localhost:3000", "http://localhost:3001"],
         env="CORS_ORIGINS"
     )
     

@@ -37,6 +37,8 @@ export async function getResearch(businessId: string): Promise<Research> {
   return response.data
 }
 
+export const getResearchStatus = getResearch // Alias for compatibility
+
 export async function generateWebsite(params: {
   business_id: string
   template_id: string

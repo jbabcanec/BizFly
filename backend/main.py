@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 
 from core.config import settings
-from api import health, businesses, templates, websites, research, preview, auth, preview_server, websites_list
+from api import health, businesses, templates, websites, research, preview, auth, preview_server, websites_list, websocket
 from models.database import engine, Base
 from services.preview_server import preview_manager
 
@@ -44,6 +44,7 @@ app.add_middleware(
 app.include_router(health.router, prefix="/api/health", tags=["health"])
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(businesses.router, prefix="/api/businesses", tags=["businesses"])
+app.include_router(websocket.router, tags=["websocket"])
 app.include_router(research.router, prefix="/api/research", tags=["research"])
 app.include_router(templates.router, prefix="/api/templates", tags=["templates"])
 app.include_router(websites_list.router, prefix="/api/websites", tags=["websites_list"])

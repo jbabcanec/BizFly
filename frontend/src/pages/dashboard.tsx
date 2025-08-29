@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Layout from '@/components/Layout'
 import SearchPanel from '@/components/SearchPanel'
 import BusinessResults from '@/components/BusinessResults'
-import WebsitePreview from '@/components/WebsitePreview'
+import WebsitePreviewEnhanced from '@/components/WebsitePreviewEnhanced'
 import { Business } from '@/types/business'
 import { 
   MagnifyingGlassIcon, 
@@ -147,7 +147,7 @@ export default function Dashboard() {
                         </button>
                       </div>
                       <div className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
-                        <WebsitePreview business={selectedBusiness} />
+                        <WebsitePreviewEnhanced business={selectedBusiness} />
                       </div>
                     </div>
                   </div>
